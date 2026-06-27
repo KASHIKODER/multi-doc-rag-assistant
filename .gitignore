@@ -1,0 +1,15 @@
+@'
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+chroma_db/
+.cache/
+
+# Do not commit private/local PDFs
+data/*.pdf
+
+# Do not commit generated metadata
+data/extracted_metadata/*.json
+'@ | Set-Content .gitignore
