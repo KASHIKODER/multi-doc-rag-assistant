@@ -405,172 +405,7 @@ python combined_document_intelligence.py chat
 
 ---
 
-## 10. Errors Faced and How They Were Solved
-
-### Error 1: Ollama command not recognized
-
-Error:
-
-```text
-ollama : The term 'ollama' is not recognized
-```
-
-Reason:
-
-Ollama was not installed or was not available in the system PATH.
-
-Fix:
-
-- Install Ollama
-- Restart PowerShell
-- Verify installation
-
-```bash
-ollama --version
-```
-
----
-
-### Error 2: Python file not found
-
-Error:
-
-```text
-can't open file 'combined_document_intelligence.py': [Errno 2] No such file or directory
-```
-
-Reason:
-
-The project was extracted into a nested folder.
-
-Actual structure:
-
-```text
-combined_document_intelligence_project/
-└── combined_document_intelligence_project/
-    └── combined_document_intelligence.py
-```
-
-Fix:
-
-Move into the inner folder:
-
-```bash
-cd .\combined_document_intelligence_project
-```
-
----
-
-### Error 3: Dependencies installation cancelled
-
-Error:
-
-```text
-ERROR: Operation cancelled by user
-```
-
-Reason:
-
-The package installation was interrupted before completion.
-
-Fix:
-
-Use:
-
-```bash
-python -m pip install --upgrade pip setuptools wheel
-python -m pip install --no-user --no-cache-dir -r requirements.txt
-```
-
----
-
-### Error 4: No useful answer from RAG
-
-Output:
-
-```text
-I don't know based on the provided documents.
-```
-
-Reason:
-
-The `data/` folder did not contain any PDF files. Only `extracted_metadata/` folder existed.
-
-Fix:
-
-Add PDFs directly into:
-
-```text
-data/
-```
-
-Then rebuild:
-
-```bash
-python combined_document_intelligence.py ingest --rebuild
-```
-
----
-
-### Error 5: Sources showed blank metadata
-
-Old output:
-
-```text
-Module 1-CSS3.pdf | page=0 | year= | title=
-```
-
-Reason:
-
-The first parser schema was designed for research papers, not course modules.
-
-Fix:
-
-The parser schema was changed to course-module metadata:
-
-```text
-ModuleTitle
-Subject
-ModuleNumber
-TopicsCovered
-LearningObjectives
-KeyConcepts
-Summary
-```
-
-Updated output:
-
-```text
-Module 1-CSS3.pdf | page=0 | subject=CSS3 | module=1 | title=CSS3 Exercises
-```
-
----
-
-### Error 6: Answer added unnecessary "I don't know"
-
-Old answer pattern:
-
-```text
-The CSS3 module covers...
-I don't know based on the provided documents.
-```
-
-Reason:
-
-The prompt was too strict and did not clearly prevent adding "I don't know" after a valid answer.
-
-Fix:
-
-Prompt was improved:
-
-```text
-If the context contains enough information to answer, answer directly.
-Do NOT add "I don't know" after giving a valid answer.
-```
-
----
-
-## 11. Final Working Output
+## 10. Final Working Output
 
 Example question:
 
@@ -610,7 +445,7 @@ This confirms that:
 
 ---
 
-## 12. What Makes This Project Different
+## 11. What Makes This Project Different
 
 This is not just a basic PDF chatbot.
 
@@ -633,7 +468,7 @@ That makes the system more transparent, searchable, and easier to extend toward 
 
 ---
 
-## 13. Future Roadmap
+## 12. Future Roadmap
 
 The next improvements will be added topic by topic.
 
@@ -851,7 +686,7 @@ It will show:
 
 ---
 
-## 14. Current Status
+## 13. Current Status
 
 | Feature | Status |
 |---|---|
