@@ -1,15 +1,32 @@
 @'
+# Environment
 .env
+**/.env
 venv/
 .venv/
+
+# Python cache
 __pycache__/
+**/__pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Vector DB / generated stores
 chroma_db/
+**/chroma_db/
 .cache/
+**/.cache/
 
-# Do not commit private/local PDFs
+# Private/local PDFs
 data/*.pdf
+**/data/*.pdf
 
-# Do not commit generated metadata
+# Generated metadata
 data/extracted_metadata/*.json
-'@ | Set-Content .gitignore
+**/data/extracted_metadata/*.json
+
+# OS/editor
+.DS_Store
+.vscode/
+'@ | Set-Content .\.gitignore
