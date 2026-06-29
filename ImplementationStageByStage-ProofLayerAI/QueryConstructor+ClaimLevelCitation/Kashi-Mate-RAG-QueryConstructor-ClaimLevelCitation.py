@@ -140,7 +140,13 @@ def clean_display_text(text: str) -> str:
 
     replacements = {
         "Exer cises": "Exercises",
+        "Exerci ses": "Exercises",
+        "Exerc ises": "Exercises",
         "JavaScript Exer cises": "JavaScript Exercises",
+        "JavaScript Exerci ses": "JavaScript Exercises",
+        "Bootstrap 5 Exerci ses": "Bootstrap 5 Exercises",
+        "HTML5 Exerci ses": "HTML5 Exercises",
+        "ANSI SQL Using MySQL Exerc ises": "ANSI SQL Using MySQL Exercises",
         "Higher -Order": "Higher-Order",
         "Async /Await": "Async/Await",
         "HTML 5": "HTML5",
@@ -560,15 +566,35 @@ def rule_based_query_construction(user_input: str) -> Optional["CourseQuery"]:
         "SQL": [
             "sql", "mysql", "join", "joins", "select", "group by",
             "aggregation", "database", "query", "queries", "subquery",
-            "subqueries", "report", "reports",
+            "subqueries", "report", "reports", "relationship", "relationships",
+            "foreign key", "foreign keys", "primary key", "primary keys",
+            "table relationship", "table relationships",
         ],
     }
 
+    # First priority: explicit subject mentions must win over generic topic aliases.
+    # Example: "What table relationships are described in the SQL module?"
+    # contains "table", but because it explicitly says SQL, it must route to SQL, not HTML5.
+    explicit_subject_patterns = [
+        (r"\b(css|css3)\b", "CSS3"),
+        (r"\b(bootstrap|bootstrap5|bootstrap\s*5)\b", "Bootstrap5"),
+        (r"\b(html|html5|html\s*5)\b", "HTML5"),
+        (r"\b(javascript|java\s*script|js)\b", "JavaScript"),
+        (r"\b(sql|mysql|ansi\s*sql)\b", "SQL"),
+    ]
+
     detected_subject = None
-    for canonical_subject, aliases in subject_aliases.items():
-        if any(alias in q for alias in aliases):
-            detected_subject = canonical_subject
+    for pattern, subject_name in explicit_subject_patterns:
+        if re.search(pattern, q):
+            detected_subject = subject_name
             break
+
+    # Second priority: infer a subject from topic words only when no explicit subject was found.
+    if detected_subject is None:
+        for canonical_subject, aliases in subject_aliases.items():
+            if any(alias in q for alias in aliases):
+                detected_subject = canonical_subject
+                break
 
     detected_module = None
     module_match = re.search(r"\bmodule\s*(\d+)\b", q)
@@ -585,7 +611,8 @@ def rule_based_query_construction(user_input: str) -> Optional["CourseQuery"]:
         "css3", "css", "bootstrap5", "bootstrap", "html5", "html 5", "html",
         "javascript", "java script", "js", "sql", "mysql",
         "and", "tell me", "about", "explain", "please",
-        "some", "important", "in", "the", "a", "an",
+        "some", "important", "in", "the", "a", "an", "what", "does",
+        "describe", "described", "module",
         "cover", "covers", "covered", "list", "show",
     ]
 
@@ -597,6 +624,15 @@ def rule_based_query_construction(user_input: str) -> Optional["CourseQuery"]:
     # Professional intent normalization for known course questions.
     if detected_subject == "JavaScript" and any(word in q for word in ["event", "events", "onclick", "listener"]):
         semantic_query = "events covered"
+
+    elif detected_subject == "SQL" and any(
+        phrase in q
+        for phrase in [
+            "relationship", "relationships", "foreign key", "foreign keys",
+            "primary key", "primary keys", "table relationship", "table relationships"
+        ]
+    ):
+        semantic_query = "table relationships explanation"
 
     elif detected_subject == "SQL" and any(word in q for word in ["join", "joins"]):
         semantic_query = "joins explanation"
@@ -1174,7 +1210,7 @@ def print_topic_answer_from_metadata(original_query: str, parsed: "CourseQuery",
         print(f"{idx}. {clean_display_text(item)}")
         print(
             f"   🟢 Source: {source_label['source_name']} "
-            f"(page {display_page_number(source_label['page'])}) | subject={source_label['subject']} | "
+            f"(page {display_page_number(source_label['page'])}) | subject={clean_display_text(source_label['subject'])} | "
             f"module={source_label['module']} | confidence=metadata"
         )
         if source_label.get("title"):
@@ -1279,7 +1315,7 @@ def print_cited_answer(cited_answer: "CitedAnswer", docs: list):
         print(f"{idx}. {claim.claim_text}")
         print(
             f"   {confidence_icon} Source: {source_name} "
-            f"(page {page}) | subject={subject} | module={module} | "
+            f"(page {page}) | subject={clean_display_text(subject)} | module={module} | "
             f"confidence={confidence}{source_note}"
         )
 
