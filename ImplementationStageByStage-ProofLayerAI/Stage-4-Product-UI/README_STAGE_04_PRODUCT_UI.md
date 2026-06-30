@@ -1,6 +1,6 @@
 # Stage 04 — Product UI + FastAPI RAG API
 
-## DocuMind RAG — Source-Grounded Document Intelligence Workspace
+## Kashi-Assist(RAG) — Source-Grounded Document Intelligence Workspace
 
 This stage converts the earlier Python-based multi-document RAG engine into a professional full-stack product experience.
 
