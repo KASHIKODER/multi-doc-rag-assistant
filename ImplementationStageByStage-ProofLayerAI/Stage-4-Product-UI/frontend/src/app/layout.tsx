@@ -1,5 +1,6 @@
 ﻿import type { Metadata } from "next";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { RagWorkspaceProvider } from "@/components/rag/RagWorkspaceProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <RagWorkspaceProvider>{children}</RagWorkspaceProvider>
+        </AuthProvider>
       </body>
     </html>
   );

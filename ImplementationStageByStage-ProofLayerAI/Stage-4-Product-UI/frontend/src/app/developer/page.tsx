@@ -1,180 +1,198 @@
 ﻿import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { APP_ROUTES, PIPELINE_STEPS } from "@/lib/constants";
+import { Badge } from "@/components/ui/Badge";
+import { APP_ROUTES } from "@/lib/constants";
 
-const systemCapabilities = [
+const pipelineSteps = [
   {
-    title: "Metadata-aware retrieval",
+    id: 1,
+    title: "Query Construction",
     description:
-      "Each chunk carries course metadata such as subject, module number, module title, topics, and key concepts.",
+      "Transforms the user question into subject, module, and semantic query fields.",
   },
   {
-    title: "Implicit query routing",
+    id: 2,
+    title: "Query Routing",
     description:
-      "Short questions like 'What are selectors?' can be routed to the right subject even when the user does not explicitly say CSS3.",
+      "Routes implicit questions to the most likely document subject when needed.",
   },
   {
-    title: "Context quality control",
+    id: 3,
+    title: "Candidate Retrieval",
     description:
-      "Retrieved chunks are re-ranked and graded before they reach answer generation.",
+      "Retrieves relevant chunks from the Chroma vector store using embeddings.",
   },
   {
-    title: "Claim-level citation",
+    id: 4,
+    title: "Local Re-ranking",
     description:
-      "Generated claims are mapped back to retrieved document sources and shown with page-level metadata.",
+      "Reorders retrieved chunks using query overlap, metadata, and topic signals.",
+  },
+  {
+    id: 5,
+    title: "Relevance Grading",
+    description:
+      "Filters weak chunks before answer generation to improve grounding.",
+  },
+  {
+    id: 6,
+    title: "Source-Grounded Answer",
+    description:
+      "Returns topic answers or claim-level cited answers with source metadata.",
   },
 ];
 
-const responseShape = [
-  "detected_subject",
-  "semantic_query",
-  "answer_mode",
-  "retrieval_stats",
-  "summary",
-  "verified_claims",
-  "sources",
+const nextActions = [
+  {
+    title: "Review documents",
+    description: "Inspect indexed PDFs, subjects, module numbers, and metadata.",
+  },
+  {
+    title: "Ask a question",
+    description: "Test topic answers, citation-backed answers, and routing.",
+  },
+  {
+    title: "Review history",
+    description: "Check locally saved questions, answer modes, and sources.",
+  },
+];
+
+const apiEndpoints = [
+  "GET /health",
+  "GET /documents",
+  "POST /documents/upload",
+  "POST /documents/rebuild",
+  "POST /ask",
+];
+
+const runtimeNotes = [
+  "FastAPI bridges the UI with the Stage-2 Python RAG engine.",
+  "Chroma DB stores indexed PDF chunks for retrieval.",
+  "Pipeline details stay hidden until expanded by the user.",
 ];
 
 export default function DeveloperPage() {
   return (
     <AppShell activePath={APP_ROUTES.developer} title="Developer">
       <PageHeader
-        title="Developer Pipeline"
-        description="A clean technical view of how the routed, re-ranked, and graded RAG system works under the product interface."
+        title="Developer"
+        description="Inspect the source-grounded RAG pipeline and product architecture used by the workspace."
       />
 
-      <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.85fr]">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-semibold text-[#2563EB]">
-            Architecture flow
-          </p>
+      <section className="mt-5 grid items-start gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-[#2563EB]">
+                System Flow
+              </p>
 
-          <h2 className="mt-2 text-xl font-semibold text-[#0F172A]">
-            From question to verified answer
-          </h2>
+              <h2 className="mt-2 text-2xl font-semibold text-[#0F172A]">
+                Source-grounded retrieval pipeline
+              </h2>
+            </div>
 
-          <div className="mt-6 grid gap-4">
-            {PIPELINE_STEPS.map((step, index) => (
+            <Badge variant="success">Active</Badge>
+          </div>
+
+          <div className="mt-5 grid gap-3">
+            {pipelineSteps.map((step) => (
               <div
-                key={step.title}
-                className="rounded-2xl border border-slate-200 p-4"
+                key={step.id}
+                className="grid grid-cols-[2.75rem_1fr] gap-4 rounded-2xl border border-slate-200 p-4"
               >
-                <div className="flex gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-sm font-semibold text-white">
-                    {index + 1}
-                  </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2563EB] text-sm font-semibold text-white">
+                  {step.id}
+                </div>
 
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#0F172A]">
-                      {step.title}
-                    </h3>
+                <div>
+                  <h3 className="text-sm font-semibold text-[#0F172A]">
+                    {step.title}
+                  </h3>
 
-                    <p className="mt-1 text-sm leading-6 text-slate-600">
-                      {step.description}
-                    </p>
-                  </div>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    {step.description}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        <div className="grid gap-6">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <aside className="grid gap-5">
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
             <p className="text-sm font-semibold text-[#2563EB]">
-              API-ready response
+              Next Actions
             </p>
 
-            <h2 className="mt-2 text-xl font-semibold text-[#0F172A]">
-              Planned response contract
+            <h2 className="mt-2 text-2xl font-semibold text-[#0F172A]">
+              Continue building
             </h2>
 
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              When the FastAPI bridge is added, the frontend will render a clean
-              response object instead of reading terminal output.
+            <div className="mt-5 grid gap-3">
+              {nextActions.map((action) => (
+                <div
+                  key={action.title}
+                  className="rounded-2xl border border-slate-200 p-4"
+                >
+                  <h3 className="text-sm font-semibold text-[#0F172A]">
+                    {action.title}
+                  </h3>
+
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    {action.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-[#2563EB]">
+              API Surface
             </p>
 
+            <h2 className="mt-2 text-2xl font-semibold text-[#0F172A]">
+              FastAPI endpoints
+            </h2>
+
             <div className="mt-5 grid gap-2">
-              {responseShape.map((field) => (
+              {apiEndpoints.map((endpoint) => (
                 <div
-                  key={field}
+                  key={endpoint}
                   className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3"
                 >
-                  <span className="text-sm font-medium text-[#0F172A]">
-                    {field}
-                  </span>
+                  <code className="text-sm font-semibold text-[#0F172A]">
+                    {endpoint}
+                  </code>
+
                   <span className="h-2.5 w-2.5 rounded-full bg-[#10B981]" />
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
             <p className="text-sm font-semibold text-[#2563EB]">
-              Backend status
+              Runtime Notes
             </p>
 
-            <h2 className="mt-2 text-xl font-semibold text-[#0F172A]">
-              Current engine
+            <h2 className="mt-2 text-2xl font-semibold text-[#0F172A]">
+              Local MVP behavior
             </h2>
 
             <div className="mt-5 grid gap-3">
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs font-medium text-slate-500">
-                  RAG backend
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[#0F172A]">
-                  Python Stage-2 engine
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs font-medium text-slate-500">
-                  API bridge
-                </p>
-                <p className="mt-1 text-sm font-semibold text-slate-500">
-                  Planned in Stage 04C
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs font-medium text-slate-500">
-                  UI connection
-                </p>
-                <p className="mt-1 text-sm font-semibold text-slate-500">
-                  Planned in Stage 04D
-                </p>
-              </div>
+              {runtimeNotes.map((note) => (
+                <div
+                  key={note}
+                  className="rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600"
+                >
+                  {note}
+                </div>
+              ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold text-[#2563EB]">
-          System capabilities
-        </p>
-
-        <h2 className="mt-2 text-xl font-semibold text-[#0F172A]">
-          What makes this more than a basic PDF chatbot
-        </h2>
-
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {systemCapabilities.map((capability) => (
-            <div
-              key={capability.title}
-              className="rounded-2xl border border-slate-200 p-4"
-            >
-              <p className="text-sm font-semibold text-[#0F172A]">
-                {capability.title}
-              </p>
-
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                {capability.description}
-              </p>
-            </div>
-          ))}
-        </div>
+          </section>
+        </aside>
       </section>
     </AppShell>
   );

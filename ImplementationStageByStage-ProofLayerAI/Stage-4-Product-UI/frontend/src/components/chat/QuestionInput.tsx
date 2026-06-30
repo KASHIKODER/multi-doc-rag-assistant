@@ -47,17 +47,17 @@ export function QuestionInput({
   }
 
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
       <p className="text-sm font-semibold text-[#2563EB]">
         Question workspace
       </p>
 
-      <h2 className="mt-2 text-xl font-semibold text-[#0F172A]">
+      <h2 className="mt-1.5 text-xl font-semibold text-[#0F172A]">
         Ask across your indexed documents
       </h2>
 
       <form onSubmit={handleSubmit}>
-        <div className="mt-5">
+        <div className="mt-3">
           <label
             htmlFor="question"
             className="text-sm font-medium text-slate-700"
@@ -67,34 +67,32 @@ export function QuestionInput({
 
           <textarea
             id="question"
-            rows={5}
+            rows={2}
             value={currentValue}
             onChange={(event) => updateQuestion(event.target.value)}
             disabled={loading}
-            className="mt-2 w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-[#0F172A] outline-none transition focus:border-[#2563EB] focus:bg-white disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-2 h-24 w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-[#0F172A] outline-none transition focus:border-[#2563EB] focus:bg-white disabled:cursor-not-allowed disabled:opacity-70"
             placeholder="Ask something about your indexed documents..."
           />
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-3 grid gap-2 md:grid-cols-2">
           {demoQuestions.map((question) => (
             <button
               key={question}
               type="button"
               disabled={loading}
               onClick={() => updateQuestion(question)}
-              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-[#2563EB] hover:text-[#0F172A] disabled:cursor-not-allowed disabled:opacity-60"
+              title={question}
+              className="truncate rounded-full border border-slate-200 bg-white px-3 py-2 text-left text-xs font-medium text-slate-600 transition hover:border-[#2563EB] hover:text-[#0F172A] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {question}
             </button>
           ))}
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button
-            type="submit"
-            disabled={!currentValue.trim() || loading}
-          >
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Button type="submit" disabled={!currentValue.trim() || loading}>
             {loading ? "Running pipeline..." : "Run RAG Pipeline"}
           </Button>
 
