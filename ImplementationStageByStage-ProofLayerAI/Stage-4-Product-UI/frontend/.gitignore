@@ -1,35 +1,4 @@
-@'
-# Environment
-.env
-**/.env
-venv/
-.venv/
 
-# Python cache
-__pycache__/
-**/__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Vector DB / generated stores
-chroma_db/
-**/chroma_db/
-.cache/
-**/.cache/
-
-# Private/local PDFs
-data/*.pdf
-**/data/*.pdf
-
-# Generated metadata
-data/extracted_metadata/*.json
-**/data/extracted_metadata/*.json
-
-# OS/editor
-.DS_Store
-.vscode/
-'@ | Set-Content .\.gitignore
 # Python
 venv/
 .venv/

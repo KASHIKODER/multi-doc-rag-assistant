@@ -1,0 +1,35 @@
+﻿@import "tailwindcss";
+
+:root {
+  --color-background: #F8FAFC;
+  --color-text: #0F172A;
+  --color-primary: #2563EB;
+  --color-accent: #10B981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
