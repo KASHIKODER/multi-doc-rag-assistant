@@ -693,3 +693,32 @@ Local question history
 ```
 
 This stage is suitable as a strong portfolio-ready MVP and a foundation for future production features.
+
+## Screenshots
+
+###
+![Landing Page](./screenshots/01-landing.png)
+
+###
+![GitHub Login](./screenshots/02-login-github.png)
+
+### 
+![Dashboard](./screenshots/03-dashboard.png)
+
+### 
+![Documents Page](./screenshots/04-documents.png)
+
+###
+![Ask Page](./screenshots/05-ask-before-answer.png)
+
+### 
+![Citation Answer](./screenshots/06-citation-answer.png)
+
+### 
+![Topic Answer](./screenshots/07-topic-answer.png)
+
+### 
+![History Page](./screenshots/08-history.png)
+
+### 
+![Developer Pipeline](./screenshots/09-developer-pipeline.png)
